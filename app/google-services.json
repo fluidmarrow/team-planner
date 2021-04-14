@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "988137625059",
+    "project_id": "team-planner-2007b",
+    "storage_bucket": "team-planner-2007b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:988137625059:android:03821b197c02f6707b3cd6",
+        "android_client_info": {
+          "package_name": "com.srivastava.teamplanner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "988137625059-9pcfh081ehkt5sjsa00khf90rclp0r99.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBMW8amhUSmxl8_Sdqc5ahlOsZhReQXzmI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "988137625059-9pcfh081ehkt5sjsa00khf90rclp0r99.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
