@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.srivastava.teamplanner.R
 import com.srivastava.teamplanner.models.SelectedMembers
 import kotlinx.android.synthetic.main.item_card_selected_member.view.*
@@ -33,8 +34,19 @@ open class CardMembersListItemAdapter(val context: Context,
                 holder.itemView.iv_add_member.visibility = View.VISIBLE
                 holder.itemView.iv_selected_member_image.visibility = View.GONE
             } else {
-                holder.itemView.iv_add_member.visibility = View.VISIBLE
+                holder.itemView.iv_add_member.visibility = View.GONE
                 holder.itemView.iv_selected_member_image.visibility = View.VISIBLE
+                Glide
+                        .with(context)
+                        .load(model.image)
+                        .centerCrop()
+                        .placeholder(R.drawable.ic_user_place_holder)
+                        .into(holder.itemView.iv_selected_member_image)
+            }
+            holder.itemView.setOnClickListener {
+                if(onClickListener != null){
+                    onClickListener!!.onClick(position)
+                }
             }
         }
     }

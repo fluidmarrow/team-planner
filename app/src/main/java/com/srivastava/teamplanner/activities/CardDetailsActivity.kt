@@ -6,14 +6,14 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import androidx.recyclerview.widget.GridLayoutManager
 import com.srivastava.teamplanner.R
+import com.srivastava.teamplanner.adapters.CardMembersListItemAdapter
 import com.srivastava.teamplanner.dialogs.LabelColorListDialog
 import com.srivastava.teamplanner.dialogs.MembersListDialog
 import com.srivastava.teamplanner.firebase.FireStoreClass
-import com.srivastava.teamplanner.models.Board
-import com.srivastava.teamplanner.models.Card
-import com.srivastava.teamplanner.models.Task
-import com.srivastava.teamplanner.models.User
+import com.srivastava.teamplanner.models.*
 import com.srivastava.teamplanner.utils.Constants
 import kotlinx.android.synthetic.main.activity_card_details.*
 
@@ -61,6 +61,8 @@ class CardDetailsActivity : BaseActivity() {
         tv_select_members.setOnClickListener {
             membersListDialog()
         }
+
+        setUpSelectedMembersList()
     }
 
     private fun getIntentData(){
@@ -126,7 +128,8 @@ class CardDetailsActivity : BaseActivity() {
             mBoardDetails.taskList[mTaskListItemPosition].cardList[mCardListItemPosition].assignedTo,
             mSelectedColor
             )
-
+        val taskList: ArrayList<Task> = mBoardDetails.taskList
+        taskList.removeAt(taskList.size - 1)
         mBoardDetails.taskList[mTaskListItemPosition].cardList[mCardListItemPosition] = card
 
         showProgressDialog(resources.getString(R.string.please_wait))
@@ -215,9 +218,59 @@ class CardDetailsActivity : BaseActivity() {
                 resources.getString(R.string.str_select_member)
         ){
             override fun onItemSelected(user: User, action: String) {
-                TODO("Implement")
+                if(action == Constants.SELECT){
+                    if(!mBoardDetails.taskList[mTaskListItemPosition].cardList[mCardListItemPosition].assignedTo.contains(user.id)){
+                        mBoardDetails.taskList[mTaskListItemPosition].cardList[mCardListItemPosition].assignedTo.add(user.id)
+                    }
+                } else {
+                    mBoardDetails.taskList[mTaskListItemPosition].cardList[mCardListItemPosition].assignedTo.remove(user.id)
+
+                    for(i in mMembersDetailsList.indices){
+                        if(mMembersDetailsList[i].id == user.id){
+                            mMembersDetailsList[i].selected = false
+                        }
+                    }
+                }
+                setUpSelectedMembersList()
             }
 
         }
     }
+
+    private fun setUpSelectedMembersList(){
+        val cardAssignedMembersList = mBoardDetails.taskList[mTaskListItemPosition].cardList[mCardListItemPosition].assignedTo
+
+        val selectedMembersList: ArrayList<SelectedMembers> = ArrayList()
+
+        for(i in mMembersDetailsList.indices){
+            for(j in cardAssignedMembersList){
+                if(mMembersDetailsList[i].id == j){
+                    val selectedMember = SelectedMembers(
+                            mMembersDetailsList[i].id,
+                            mMembersDetailsList[i].image
+                    )
+                    selectedMembersList.add(selectedMember)
+                }
+            }
+        }
+        if(selectedMembersList.size>0){
+            selectedMembersList.add(SelectedMembers("",""))
+            tv_select_members.visibility = View.GONE
+            rv_selected_members_list.visibility = View.VISIBLE
+            rv_selected_members_list.layoutManager = GridLayoutManager(this,6)
+            val adapter = CardMembersListItemAdapter(this,selectedMembersList)
+            rv_selected_members_list.adapter = adapter
+            adapter.setOnClickListener(
+                    object: CardMembersListItemAdapter.OnClickListener{
+                        override fun onClick(position: Int) {
+                            membersListDialog()
+                        }
+                    }
+            )
+        } else {
+            tv_select_members.visibility = View.VISIBLE
+            rv_selected_members_list.visibility = View.GONE
+        }
+    }
+
 }
